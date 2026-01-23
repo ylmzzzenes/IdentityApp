@@ -9,7 +9,7 @@ builder.Services.AddDbContext<IdentityContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityApp"));
 });
-builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<IdentityContext>();
+builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<IdentityContext>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -26,6 +26,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{Action=Index}/{id?}"
     );
-IdentitySeedData.IdentityTestUser(app);
+ IdentitySeedData.IdentityTestUser(app);
 
 app.Run();
