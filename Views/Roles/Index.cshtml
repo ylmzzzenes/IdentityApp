@@ -22,7 +22,7 @@
 			<tr>
 				<td>@role.Id</td>
 				<td>@role.Name</td>
-				<td>Kullanıcı Listesi</td>
+				<td asp-role-users="@role.Id"></td>
 				<td>
 					<a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-primary">Edit</a>
 					<form asp-action="Delete"method="post" onsubmit="return confirm('Silmek istediğinize emin misiniz?')" style="display: inline-block;">
