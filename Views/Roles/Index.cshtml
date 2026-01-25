@@ -4,10 +4,10 @@
 <table class="table table-bordered">
 	<thead>
 		<tr>
-		<th>Id</th>
-		<th>Role Adı</th>
-		<th>Kullanıcılar</th>
-		<th style="width: 125px;"></th>
+			<th>Id</th>
+			<th>Role Adı</th>
+			<th>Kullanıcılar</th>
+			<th style="width: 125px;"></th>
 		</tr>
 	</thead>
 		@if(Model.Count() == 0)
@@ -24,10 +24,10 @@
 				<td>@role.Name</td>
 				<td asp-role-users="@role.Id"></td>
 				<td>
-					<a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-primary">Edit</a>
+					<a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-primary btn-sm">Edit</a>
 					<form asp-action="Delete"method="post" onsubmit="return confirm('Silmek istediğinize emin misiniz?')" style="display: inline-block;">
-						<input type="hidden"  value="@role.Id" name="id">
-						<button type="submit" class="btn btn-danger btn-sm">Delete</button>
+						<input type="hidden"  value="@role.Id" name="@role.Id">
+						<button type="submit" href="" class="btn btn-danger btn-sm">Delete</button>
 					</form>
 				</td>
 			</tr>
