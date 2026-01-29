@@ -2,6 +2,8 @@
 using IdentityApp.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
 
 namespace IdentityApp.Controllers
 {
@@ -10,12 +12,14 @@ namespace IdentityApp.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private IEmailSender _emailSender;
 
-        public AccountController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, SignInManager<AppUser> signInManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
+            _emailSender = emailSender;
         }
         public IActionResult Login()
         {
@@ -86,7 +90,10 @@ namespace IdentityApp.Controllers
                 if (result.Succeeded)
                 {
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var url = Url.Action("ConfirmEmail", "Account", new { user.Id, token });
+                    var url = Url.Action("ConfirmEmail", "Account", new { user.Id, token },protocol: Request.Scheme);
+
+                    await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"Lütfen email hesabınızı onaylamak için linke <a href='http://localhost:16342/{url}'>tıklayınız.</a>");
+
                     TempData["message"] = "Email hesabınızdaki onay mailine tıklayınız";
                     return RedirectToAction("Login","Account");
                 }
@@ -99,30 +106,29 @@ namespace IdentityApp.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> ConfirmEmail(string Id,string token)
+        public async Task<IActionResult> ConfirmEmail(string Id, string token)
         {
-            if(Id == null || token == null)
+            if (Id == null || token == null)
             {
                 TempData["message"] = "Geçersiz token";
                 return View();
             }
             var user = await _userManager.FindByIdAsync(Id);
 
-            if(user != null)
+            if (user != null)
             {
                 var result = await _userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
                     TempData["message"] = "Hesabınız onaylandı";
-                    return RedirectToAction("Login","Account");
+                    return RedirectToAction("Login", "Account");
                 }
-               
-              } 
-            
+
+            }
+
             TempData["message"] = "Kullanıcı bulunamadı.";
             return View();
-                
-            
+
         }
     } 
 }

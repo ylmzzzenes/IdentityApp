@@ -4,6 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>( i =>
+    new SmtpEmailSender(
+        builder.Configuration["EmailSender:Host"],
+        builder.Configuration.GetValue<int>("EmailSender:Port"),
+        builder.Configuration.GetValue<bool>("EmailSender:EnableSSL"),
+        builder.Configuration["EmailSender:UserName"],
+        builder.Configuration["EmailSender:Password"])
+        );
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<IdentityContext>(options =>
 {
@@ -19,7 +29,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true;
 
     options.User.RequireUniqueEmail = true;
-    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    //options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 
     options.SignIn.RequireConfirmedEmail = true;
 });
