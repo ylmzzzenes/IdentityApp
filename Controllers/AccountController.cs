@@ -90,9 +90,9 @@ namespace IdentityApp.Controllers
                 if (result.Succeeded)
                 {
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var url = Url.Action("ConfirmEmail", "Account", new { user.Id, token },protocol: Request.Scheme);
+                    var url = Url.Action("ConfirmEmail", "Account", new { Id=user.Id, token=token },protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"Lütfen email hesabınızı onaylamak için linke <a href='http://localhost:16342/{url}'>tıklayınız.</a>");
+                    await _emailSender.SendEmailAsync(user.Email, "Hesap Onayı", $"Lütfen email hesabınızı onaylamak için linke <a href='{url}'>tıklayınız.</a>");
 
                     TempData["message"] = "Email hesabınızdaki onay mailine tıklayınız";
                     return RedirectToAction("Login","Account");
@@ -129,6 +129,12 @@ namespace IdentityApp.Controllers
             TempData["message"] = "Kullanıcı bulunamadı.";
             return View();
 
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login", "Account");
         }
     } 
 }
